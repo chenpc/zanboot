@@ -1,0 +1,53 @@
+$def with (dataset_list)
+#!ipxe
+
+set op create
+:start
+menu Please choose an operating system to boot
+item --gap -- IP:[$${ip}]
+item reload  Reload menu
+item --gap -- Volume Operations
+item create Create
+item delete Delete
+item snapshot Sanpshot
+item --gap -- Boot Volume
+
+$for k, ds in dataset_list.items():
+    $if ds.snapshot == 1:
+        item $ds.name [$ds.name]
+    $else:
+        item $ds.name $ds.name
+
+item --gap -- --------
+item bfo  Boot Fedora
+item shell Enter Shell
+choose selected
+set menu-timeout 0
+goto $${selected}
+
+:reload
+chain http://192.168.10.2:8080/menu
+
+
+:shell
+shell
+
+:delete
+chain http://192.168.10.2:8080/delete_menu
+
+:create
+clear volname
+echo -n Enter volume name you want to create: && read volname
+echo -n Enter volume Size you want to create: && read volsize
+chain http://192.168.10.2:8080/create/$${volname}/$${volsize}
+
+:snapshot
+chain http://192.168.10.2:8080/snapshot_menu
+
+
+:bfo
+chain http://dl.fedoraproject.org/pub/alt/bfo/bfo.lkrn
+
+$for k, ds in dataset_list.items():
+    :$ds.name
+    chain http://192.168.10.2:8080/boot/$ds.name/$${mac:hexraw}

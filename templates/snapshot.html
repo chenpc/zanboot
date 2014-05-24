@@ -1,0 +1,27 @@
+$def with (dataset_list)
+#!ipxe
+
+set op create
+:start
+menu Please choose an operating system to boot
+item reload  Back to main menu
+
+$for k, ds in dataset_list.items():
+    item $ds.name $ds.name
+
+item --gap -- --------
+item shell Enter Shell
+choose selected
+set menu-timeout 0
+goto $${selected}
+
+:reload
+chain http://192.168.10.2:8080/menu
+
+:shell
+shell
+
+
+$for k, ds in dataset_list.items():
+        :$ds.name
+	chain http://192.168.10.2:8080/snapshot/$ds.name
