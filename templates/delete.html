@@ -1,4 +1,4 @@
-$def with (dataset_list)
+$def with (dataset_list, ip)
 #!ipxe
 
 set op create
@@ -16,7 +16,7 @@ set menu-timeout 0
 goto $${selected}
 
 :reload
-chain http://192.168.10.2:8080/menu
+chain http://${ip}:8080/menu
 
 :shell
 shell
@@ -24,4 +24,4 @@ shell
 
 $for k, ds in dataset_list.items():
     :$ds.name
-    chain http://192.168.10.2:8080/delete/$ds.name
+    chain http://${ip}:8080/delete/$ds.name

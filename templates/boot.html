@@ -1,3 +1,3 @@
-$def with (volname, mac)
+$def with (volname, mac, ip)
 #!ipxe
-sanboot iscsi:192.168.10.2::::iqn.2014-04.com.qnap:$volname$mac || chain http://192.168.10.2:8080/clone_boot/$volname/$${mac:hexraw} || chain http://192.168.10.2:8080/menu
+sanboot iscsi:${ip}::::iqn.2014-04.com.qnap:${volname}-${mac} || chain http://${ip}:8080/clone_boot/${volname}/${mac}

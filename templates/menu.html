@@ -1,4 +1,4 @@
-$def with (dataset_list)
+$def with (dataset_list, ip)
 #!ipxe
 
 set op create
@@ -12,6 +12,7 @@ item delete Delete
 item snapshot Sanpshot
 item --gap -- Boot Volume
 
+item osx Boot MacOSX
 $for k, ds in dataset_list.items():
     $if ds.snapshot == 1:
         item $ds.name [$ds.name]
@@ -21,33 +22,33 @@ $for k, ds in dataset_list.items():
 item --gap -- --------
 item bfo  Boot Fedora
 item shell Enter Shell
-choose selected
-set menu-timeout 0
-goto $${selected}
+choose --default osx --timeout 10 selected && goto $${selected}
 
 :reload
-chain http://192.168.10.2:8080/menu
+chain http://${ip}:8080/menu
 
 
 :shell
 shell
 
 :delete
-chain http://192.168.10.2:8080/delete_menu
+chain http://${ip}:8080/delete_menu
 
 :create
 clear volname
 echo -n Enter volume name you want to create: && read volname
 echo -n Enter volume Size you want to create: && read volsize
-chain http://192.168.10.2:8080/create/$${volname}/$${volsize}
+chain http://${ip}:8080/create/$${volname}/$${volsize}
 
 :snapshot
-chain http://192.168.10.2:8080/snapshot_menu
+chain http://${ip}:8080/snapshot_menu
 
+:osx
+sanboot -n -d 0x81
 
 :bfo
 chain http://dl.fedoraproject.org/pub/alt/bfo/bfo.lkrn
 
 $for k, ds in dataset_list.items():
     :$ds.name
-    chain http://192.168.10.2:8080/boot/$ds.name/$${mac:hexraw}
+    chain http://${ip}:8080/boot/$ds.name/$${mac:hexraw}
