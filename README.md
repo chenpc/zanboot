@@ -7,13 +7,15 @@ First of all, you need FreeBSD-10. I use native iscsi-target server in FreeBSD-1
 But ZFS in FreeBSD-10 has bug on create clone(r264729), you need the patch this first.
 
 And then, you should create a file named /etc/ctl.bsd.conf:
-=========
 portal-group pg0 {
         discovery-auth-group no-authentication
         listen 0.0.0.0
         listen [::]
 }
-=========
+
+
+
+
 This is a base file of /etc/ctl.conf, zanboot will merge this config with new iSCSI target.
 
 
