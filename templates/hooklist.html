@@ -1,0 +1,28 @@
+$def with (dataset_list, ip)
+#!ipxe
+
+set op create
+:start
+menu Please choose an operating system to hook
+item reload  Back to main menu
+
+$for k, ds in dataset_list.items():
+    item $ds.name $ds.name
+
+item --gap -- --------
+item shell Enter Shell
+choose selected
+set menu-timeout 0
+goto $${selected}
+
+:reload
+chain http://${ip}:8080/menu
+
+:shell
+shell
+
+
+$for k, ds in dataset_list.items():
+        :$ds.name
+	sanhook -d 0x80 iscsi:${ip}::::iqn.2014-04.com.qnap:${ds.name} 
+	chain http://${ip}:8080/menu

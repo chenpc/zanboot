@@ -8,8 +8,10 @@ urls = (
     '/create/(.*)/(.*)', 'Create',
     '/delete_menu', 'DeleteMenu',
     '/snapshot_menu', 'SnapshotMenu',
+    '/hook_menu', 'HookMenu',
     '/delete/(.*)', 'Delete',
     '/boot/(.*)/(.*)', 'Boot',
+    '/hook/(.*)', 'Hook',
     '/clone_boot/(.*)/(.*)', 'CloneBoot',
     '/snapshot/(.*)', 'Snapshot'
 )
@@ -149,16 +151,12 @@ def delete_zvol(volname):
     except:
         pass
 
-
-# noinspection PyClassHasNoInit
 class Menu:
 
     def GET(self):
         reload_ctld()
         return render.menu(sanboot_dataset_list("on"), config.sanboot_ip)
 
-
-# noinspection PyClassHasNoInit
 class CloneBoot:
 
     def GET(self, volname, mac):
@@ -169,7 +167,6 @@ class CloneBoot:
         return render.clone_boot(volname + "-" + mac, config.sanboot_ip)
 
 
-# noinspection PyClassHasNoInit
 class Boot:
 
     def GET(self, volname, mac):
@@ -178,8 +175,6 @@ class Boot:
             return render.boot(volname, mac, config.sanboot_ip)
         return render.boot(volname, "", config.sanboot_ip)
 
-
-# noinspection PyClassHasNoInit
 class Create:
 
     def GET(self, volname, volsize):
@@ -187,30 +182,28 @@ class Create:
         return "#!ipxe\nchain http://{0}:8080/menu".format(config.sanboot_ip)
 
 
-# noinspection PyClassHasNoInit
 class Delete:
 
     def GET(self, volname):
         delete_zvol(volname)
         return "#!ipxe\nchain http://{0}:8080/menu".format(config.sanboot_ip)
 
-
-# noinspection PyClassHasNoInit
 class DeleteMenu:
 
     def GET(self):
         return render.delete(sanboot_dataset_list("on"), config.sanboot_ip)
 
-
-# noinspection PyClassHasNoInit
 class Snapshot:
 
     def GET(self, volname):
         snapshot_zvol(volname)
         return "#!ipxe\nchain http://{0}:8080/menu".format(config.sanboot_ip)
 
+class HookMenu:
 
-# noinspection PyClassHasNoInit
+    def GET(self):
+        return render.hooklist(sanboot_dataset_list("on"), config.sanboot_ip)
+
 class SnapshotMenu:
 
     def GET(self):

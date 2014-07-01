@@ -10,9 +10,10 @@ item --gap -- Volume Operations
 item create Create
 item delete Delete
 item snapshot Sanpshot
+item hook Hook
 item --gap -- Boot Volume
 
-item osx Boot MacOSX
+item osx Boot Local HD
 $for k, ds in dataset_list.items():
     $if ds.snapshot == 1:
         item $ds.name [$ds.name]
@@ -20,7 +21,7 @@ $for k, ds in dataset_list.items():
         item $ds.name $ds.name
 
 item --gap -- --------
-item bfo  Boot Fedora
+item installwin7 Install Windows 7(wimboot)
 item shell Enter Shell
 choose --default osx --timeout 10 selected && goto $${selected}
 
@@ -43,11 +44,14 @@ chain http://${ip}:8080/create/$${volname}/$${volsize}
 :snapshot
 chain http://${ip}:8080/snapshot_menu
 
+:hook
+chain http://${ip}:8080/hook_menu
+
 :osx
 sanboot -n -d 0x81
 
-:bfo
-chain http://dl.fedoraproject.org/pub/alt/bfo/bfo.lkrn
+:installwin7
+chain http://${ip}/win7/boot.ipxe
 
 $for k, ds in dataset_list.items():
     :$ds.name

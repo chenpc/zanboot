@@ -1,3 +1,4 @@
 $def with (volname, ip)
 #!ipxe
+set keep-san 1
 sanboot iscsi:${ip}::::iqn.2014-04.com.qnap:$volname

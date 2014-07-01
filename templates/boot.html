@@ -1,3 +1,7 @@
 $def with (volname, mac, ip)
 #!ipxe
-sanboot iscsi:${ip}::::iqn.2014-04.com.qnap:${volname}-${mac} || chain http://${ip}:8080/clone_boot/${volname}/${mac}
+set keep-san 1
+$if mac == "":
+    sanboot iscsi:${ip}::::iqn.2014-04.com.qnap:${volname} || chain http://${ip}:8080/clone_boot/${volname}/${mac}
+$else:    
+    sanboot iscsi:${ip}::::iqn.2014-04.com.qnap:${volname}-${mac} || chain http://${ip}:8080/clone_boot/${volname}/${mac}
